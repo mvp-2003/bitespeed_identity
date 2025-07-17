@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: bitespeed
+      POSTGRES_PASSWORD: bitespeed
+      POSTGRES_DB: bitespeed
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  app:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://bitespeed:bitespeed@db:5432/bitespeed
+    ports:
+      - "8000:8000"
+    command: ["./bitespeed_identity"]
+volumes:
+  pgdata:
