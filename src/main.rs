@@ -18,6 +18,11 @@ async fn identify_route(payload: Json<IdentifyRequest>, pool: &rocket::State<PgP
     Ok(Json(IdentifyResponse { contact: summary }))
 }
 
+#[get("/")]
+async fn index() -> &'static str {
+    "Bitespeed Identity API - Use POST /identify or GET /health"
+}
+
 #[get("/health")]
 async fn health() -> &'static str {
     "ok"
@@ -29,12 +34,18 @@ async fn rocket(
 ) -> shuttle_rocket::ShuttleRocket {
     let pool = sqlx::postgres::PgPoolOptions::new()
         .max_connections(10)
-        .connect(&database_url)
+        .connect(&format!("{}?sslmode=require", database_url))
         .await
         .expect("Failed to connect to database");
 
+    // Run database migrations
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("Failed to run migrations");
+
     let rocket = rocket::build()
         .manage(pool)
-        .mount("/", routes![health, identify_route]);
+        .mount("/", routes![index, health, identify_route]);
     Ok(rocket.into())
 }

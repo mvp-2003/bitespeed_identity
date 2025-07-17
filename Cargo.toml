@@ -13,7 +13,7 @@ dotenvy = "0.15"
 thiserror = "1.0"
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter"] }
-sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "postgres", "chrono", "macros"] }
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "postgres", "chrono", "macros", "tls-rustls", "migrate"] }
 shuttle-runtime = "0.56.0"
 shuttle-rocket = "0.56.0"
 shuttle-shared-db = { version = "0.56.0", default-features = false, features = ["postgres"] }
